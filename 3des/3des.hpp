@@ -9,7 +9,7 @@ namespace utils
 	namespace crypto
 	{
 		
-		inline int tribledes_encrypt(const std::string& strSercetKey, const std::string& strInitialVector,\
+		inline int tribledes_cbc_encrypt(const std::string& strSercetKey, const std::string& strInitialVector,\
 			const std::string& strPlainText, std::string& strCipherText, int nPadding = 1)
 		{
 			//cipber buffer prepare
