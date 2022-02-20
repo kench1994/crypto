@@ -20,6 +20,7 @@ namespace utils
 			ciperBufferLen = ((!nPadding && 0 == (strPlainText.length() % 8) ? 0 : 1) + strPlainText.length() / 8) * 8;
 			boost::scoped_array<unsigned char>ciperBuffer(new unsigned char[ciperBufferLen]);
 			memset(ciperBuffer.get(), 0, ciperBufferLen);
+			memcpy(ciperBuffer.get(), strPlainText.data(), strPlainText.length());
 
 			//prepare key & iv
 			unsigned char key[EVP_MAX_KEY_LENGTH]{ 0 };
@@ -27,9 +28,6 @@ namespace utils
 			strcpy_s(reinterpret_cast<char*>(key), strSercetKey.length() + 1, strSercetKey.c_str());
 			strcpy_s(reinterpret_cast<char*>(iv), strInitialVector.length() + 1, strInitialVector.c_str());
 
-			boost::scoped_array<unsigned char>plainBuffer(new unsigned char[ciperBufferLen]);
-			memset(plainBuffer.get(), 0, ciperBufferLen);
-			memcpy(plainBuffer.get(), strPlainText.data(), strPlainText.length());
 			if (nPadding)
 			{
 				//pkcs5 padding
@@ -43,13 +41,13 @@ namespace utils
 					char ch = 8 - m;
 					unsigned int cnt = static_cast<unsigned int>(ch);
 					for(unsigned int i = 0; i < cnt; ++i)
-						memcpy(plainBuffer.get() + strPlainText.length() + i, &ch, 1);
+						memcpy(ciperBuffer.get() + strPlainText.length() + i, &ch, 1);
 				}
 				else
 				{
 					char ch = 8;
 					for (unsigned int i = 0; i < 8; ++i)
-						memcpy(plainBuffer.get() + strPlainText.length() + i, &ch, 1);
+						memcpy(ciperBuffer.get() + strPlainText.length() + i, &ch, 1);
 				}
 			}
 
@@ -63,7 +61,7 @@ namespace utils
 			if (1 == (ret = EVP_EncryptInit_ex(ctx.get(), EVP_des_ede3_cbc(), NULL, key, iv)) && \
 				/*user shuould set padding byself & disable openssl default padding here*/
 				1 == (ret = EVP_CIPHER_CTX_set_padding(ctx.get(), 0)) && \
-				1 == (ret = EVP_EncryptUpdate(ctx.get(), ciperBuffer.get(), &ciperLength, plainBuffer.get(), ciperBufferLen)) &&\
+				1 == (ret = EVP_EncryptUpdate(ctx.get(), ciperBuffer.get(), &ciperLength, ciperBuffer.get(), ciperBufferLen)) &&\
 				1 == (ret = EVP_EncryptFinal_ex(ctx.get(), ciperBuffer.get() + ciperLength, &ciperLengthTmp)))
 			{
 				ciperLength = ciperLength + ciperLengthTmp;
