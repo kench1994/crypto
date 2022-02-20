@@ -67,16 +67,24 @@ inline std::string ToHexString(const char* buf, unsigned int len, const char* ps
 
 int main()
 {
-    std::string strPlainText = "12345678910", strCipherText;
-    utils::crypto::tribledes_encrypt("kench_tt", "01234567", strPlainText, strCipherText, 1);
-    std::cout << ToHexString(strCipherText.data(), strCipherText.length()) << std::endl;;
-    std::cout << base64Encode(strCipherText.data(), strCipherText.length(), true) << std::endl;
+    std::string strPlainText = "123456", strCipherText;
+    for(const char& ch : {'7', '8', '9', '0'})
+    {
+        strPlainText += ch;
+        std::cout << "plainTex:" << strPlainText << std::endl;
+        std::cout << "pkcs5 padding" << std::endl;
+        utils::crypto::tribledes_encrypt("kench_tt", "01234567", strPlainText, strCipherText, 1);
+        std::cout << ToHexString(strCipherText.data(), strCipherText.length()) << std::endl;;
+        std::cout << base64Encode(strCipherText.data(), strCipherText.length(), true) << std::endl;
 
-    strCipherText.clear();
+        strCipherText.clear();
 
-    utils::crypto::tribledes_encrypt("kench_tt", "01234567", strPlainText, strCipherText, 0);
-    std::cout << ToHexString(strCipherText.data(), strCipherText.length()) << std::endl;
-    std::cout << base64Encode(strCipherText.data(), strCipherText.length(), true) << std::endl;
+        std::cout << "zero padding" << std::endl;
+        utils::crypto::tribledes_encrypt("kench_tt", "01234567", strPlainText, strCipherText, 0);
+        std::cout << ToHexString(strCipherText.data(), strCipherText.length()) << std::endl;
+        std::cout << base64Encode(strCipherText.data(), strCipherText.length(), true) << std::endl;
 
+        std::cout << "-------------" << std::endl;
+    }
     return 0;
 }
