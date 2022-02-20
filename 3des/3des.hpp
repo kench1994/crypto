@@ -8,7 +8,10 @@ namespace utils
 {
 	namespace crypto
 	{
-		
+		/**
+		 * @brief 
+		 * Todo: enum padding mode & custom evp_cipber
+		 */
 		inline int tribledes_cbc_encrypt(const std::string& strSercetKey, const std::string& strInitialVector,\
 			const std::string& strPlainText, std::string& strCipherText, int nPadding = 1)
 		{
