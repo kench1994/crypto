@@ -73,6 +73,44 @@ namespace utils
 			}
 			return ret;
 		}
+
+
+		//TODO:padding
+		inline int tribledes_cbc_decrypt(const std::string& strSercetKey, const std::string& strInitialVector,\
+			const std::string& strCipherText, std::string& strPlainText)
+		{
+			unsigned char key[EVP_MAX_KEY_LENGTH]{ 0 };
+			unsigned char iv[EVP_MAX_IV_LENGTH]{ 0 };
+			strcpy_s(reinterpret_cast<char*>(key), strSercetKey.length() + 1, strSercetKey.c_str());
+			strcpy_s(reinterpret_cast<char*>(iv), strInitialVector.length() + 1, strInitialVector.c_str());
+
+			//我没有去算要准备多的空间,但是应该不会超出密文大小
+			unsigned int uCipherTextLen = strCipherText.length();
+			utils::unique_array<unsigned char>plainBuffer(new unsigned char[uCipherTextLen + 1]);
+			memset(plainBuffer.get(), 0, uCipherTextLen + 1);
+
+			//明文长度
+			int nPlainTextLen = 0, nPlainTextLenTmp = 0;
+			std::shared_ptr<EVP_CIPHER_CTX> ctx(EVP_CIPHER_CTX_new(), [](EVP_CIPHER_CTX* p) {
+				EVP_CIPHER_CTX_free(p);
+			});
+
+			int ret = 1;
+			
+			//std::string strTemp = strCipherText.substr(0, strCipherText.length() - 5);
+			const unsigned char* pszDtsToCrypto = reinterpret_cast<const unsigned char*>(strCipherText.data());
+			if (1 == (ret = EVP_DecryptInit_ex(ctx.get(), EVP_des_ede3_cbc(), NULL, key, iv)) && \
+				/*user shuould set padding byself & disable openssl default padding here*/
+				1 == (ret = EVP_CIPHER_CTX_set_padding(ctx.get(), 1)) && 
+				1 == (ret = EVP_DecryptUpdate(ctx.get(), plainBuffer.get(), &nPlainTextLen, pszDtsToCrypto, uCipherTextLen)))
+			{
+				EVP_DecryptFinal_ex(ctx.get(), plainBuffer.get() + nPlainTextLen, &nPlainTextLenTmp);
+				auto* pszDtsResultBufferPtr = reinterpret_cast<char*>(plainBuffer.get());
+				strPlainText.assign(pszDtsResultBufferPtr, nPlainTextLen + nPlainTextLenTmp);
+				return 0;
+			}
+			return ret;
+		}
 	}
 }
 
