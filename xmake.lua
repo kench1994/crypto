@@ -5,7 +5,6 @@ set_config("vs_runtime", "MD")
 set_config("shared", "true")
 
 add_requires("vcpkg::openssl", {configs = {shared = true, vs_runtime = "MD"}, alias = "openssl"})
---add_requires("vcpkg::boost", {configs = {shared = true, vs_runtime = "MD"}, alias = "boost"})
 
 option("mode.RuntimeLibrary")
     if(is_mode("release")) then
@@ -19,15 +18,10 @@ target("3DesTest")
     add_options("mode.RuntimeLibrary")
     set_symbols("debug")
     
-    add_includedirs("3des")
+    add_includedirs("3des", ".")
     add_files("3des/*.cpp")
-    add_packages("openssl", "vcpkg::boost 1.78.0")
+    add_packages("openssl")
 
-    -- on_load(function (target)
-    --     import("lib.detect.find_package")
-    --     target:add(find_package("openssl"))
-    --     --target:add(find_packages("vcpkg::openssl", "boost"))
-    -- end)
 
 -- 传递变量
 -- option("foo")

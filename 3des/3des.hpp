@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <openssl/evp.h>
-#include <boost/scoped_array.hpp>
+#include "utils/unique_array.hpp"
 namespace utils
 {
 	namespace crypto
@@ -21,7 +21,7 @@ namespace utils
 			//其他padding时都补1位
 			unsigned int ciperBufferLen = 0;
 			ciperBufferLen = ((!nPadding && 0 == (strPlainText.length() % 8) ? 0 : 1) + strPlainText.length() / 8) * 8;
-			boost::scoped_array<unsigned char>ciperBuffer(new unsigned char[ciperBufferLen]);
+			utils::unique_array<unsigned char>ciperBuffer(new unsigned char[ciperBufferLen]);
 			memset(ciperBuffer.get(), 0, ciperBufferLen);
 			memcpy(ciperBuffer.get(), strPlainText.data(), strPlainText.length());
 
