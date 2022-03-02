@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning (disable:4819)
 #include <string>
 #include <vector>
 #include <memory>
@@ -28,8 +29,8 @@ namespace utils
 			//prepare key & iv
 			unsigned char key[EVP_MAX_KEY_LENGTH]{ 0 };
 			unsigned char iv[EVP_MAX_KEY_LENGTH]{ 0 };
-			strcpy_s(reinterpret_cast<char*>(key), strSercetKey.length() + 1, strSercetKey.c_str());
-			strcpy_s(reinterpret_cast<char*>(iv), strInitialVector.length() + 1, strInitialVector.c_str());
+			strncpy(reinterpret_cast<char*>(key), strSercetKey.c_str(), strSercetKey.length());
+			strncpy(reinterpret_cast<char*>(iv),  strInitialVector.c_str(), strInitialVector.length());
 
 			if (nPadding)
 			{
@@ -81,8 +82,8 @@ namespace utils
 		{
 			unsigned char key[EVP_MAX_KEY_LENGTH]{ 0 };
 			unsigned char iv[EVP_MAX_IV_LENGTH]{ 0 };
-			strcpy_s(reinterpret_cast<char*>(key), strSercetKey.length() + 1, strSercetKey.c_str());
-			strcpy_s(reinterpret_cast<char*>(iv), strInitialVector.length() + 1, strInitialVector.c_str());
+			strncpy(reinterpret_cast<char*>(key), strSercetKey.c_str(), strSercetKey.length());
+			strncpy(reinterpret_cast<char*>(iv),  strInitialVector.c_str(), strInitialVector.length());
 
 			//我没有去算要准备多的空间,但是应该不会超出密文大小
 			unsigned int uCipherTextLen = strCipherText.length();
