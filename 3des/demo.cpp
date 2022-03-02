@@ -8,7 +8,7 @@
 
 int main()
 {
-    std::string strPlainText = "123456", strCipherText;
+    std::string strPlainText = "123456", strCipherText, strDecodeText;
     for(const char& ch : {'7', '8', '9', '0'})
     {
         strPlainText += ch;
@@ -19,19 +19,23 @@ int main()
         std::string strBase64Encode = utils::base64Encode(strCipherText.data(), strCipherText.length(), true);
         std::cout << strBase64Encode << std::endl;
 
-        strPlainText.clear();
         std::string strBase64Decode = utils::base64Decode(strBase64Encode.data(), strBase64Encode.length());
-        if(strCipherText == strBase64Decode)
-            utils::crypto::tribledes_cbc_decrypt("kench_tt", "01234567", strBase64Decode, strPlainText);
+        utils::crypto::tribledes_cbc_decrypt("kench_tt", "01234567", strBase64Decode, strDecodeText);
+		std::cout << "decode test:" << strDecodeText << std::endl;
 
         
-
+		strDecodeText.clear();
         strCipherText.clear();
 
         std::cout << "zero padding" << std::endl;
         utils::crypto::tribledes_cbc_encrypt("kench_tt", "01234567", strPlainText, strCipherText, 0);
         std::cout << utils::ToHexString(strCipherText.data(), strCipherText.length()) << std::endl;
         std::cout << utils::base64Encode(strCipherText.data(), strCipherText.length(), true) << std::endl;
+		utils::crypto::tribledes_cbc_decrypt("kench_tt", "01234567", strBase64Decode, strDecodeText);
+		std::cout << "decode test:" << strDecodeText << std::endl;
+
+		strDecodeText.clear();
+		strCipherText.clear();
 
         std::cout << "-------------" << std::endl;
     }

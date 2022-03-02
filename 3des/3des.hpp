@@ -57,7 +57,7 @@ namespace utils
 			std::shared_ptr<EVP_CIPHER_CTX> ctx(EVP_CIPHER_CTX_new(), [](EVP_CIPHER_CTX* p) {
 				EVP_CIPHER_CTX_free(p);
 			});
-
+			
 			//calc
 			int ret = 1;
 			int ciperLength = 0, ciperLengthTmp = 0;
@@ -106,11 +106,18 @@ namespace utils
 			{
 				EVP_DecryptFinal_ex(ctx.get(), plainBuffer.get() + nPlainTextLen, &nPlainTextLenTmp);
 				auto* pszDtsResultBufferPtr = reinterpret_cast<char*>(plainBuffer.get());
-				strPlainText.assign(pszDtsResultBufferPtr, nPlainTextLen + nPlainTextLenTmp);
+				for (auto nPos = 0; nPos < nPlainTextLen + nPlainTextLenTmp; nPos++)
+				{
+					if (*pszDtsResultBufferPtr < 0x08)
+						return 0;
+					strPlainText += *pszDtsResultBufferPtr;
+					pszDtsResultBufferPtr += 1;
+				}
 				return 0;
 			}
 			return ret;
 		}
 	}
 }
+
 
