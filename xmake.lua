@@ -1,27 +1,30 @@
 if is_os("windows") then
+    set_config("arch", "x86")
     if(is_mode("release")) then
+        set_config("vs_runtime", "MD")
         add_cxflags("-MD", {force = true})
+        set_installdir("build/windows/x86/release")
     else
+        set_config("vs_runtime", "MDd")
         add_cxflags("-MDd", {force = true})
+        set_installdir("build/windows/x86/debug")
     end
 else
     add_cxflags("-MD", {force = true})
 end
-set_config("shared", "true")
 
-option("openssl.static")
-    add_includedirs("$(env iudge_devpkg_root)\\third\\openssl.pkg\\v1.0.2p-1-static\\inc")
-    add_linkdirs("$(env iudge_devpkg_root)\\third\\openssl.pkg\\v1.0.2p-1-static\\lib\\windows\\x86\\release")
-    add_links("libeay32", "ssleay32")
-    add_syslinks("User32", "Advapi32", "GDI32")
+add_requires("vcpkg::openssl", {configs = {shared = true, vs_runtime = "MD"}, alias = "openssl"})
 
 target("3DesTest")
     set_kind("binary")
     set_symbols("debug")
-    add_options("openssl.static", {force = true})
+    add_packages("openssl")
     
-    add_includedirs("3des", ".")
+    add_includedirs("3des", "Utils")
     add_files("3des/*.cpp")
+    after_build(function(target)
+        import("target.action.install")(target)
+    end)
 -- 传递变量
 -- option("foo")
 -- set_default(true)

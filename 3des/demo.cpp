@@ -2,8 +2,8 @@
 //
 
 #include <iostream>
+#include <utils/str_helper.hpp>
 #include "3des.hpp"
-#include "utils/str_helper.hpp"
 
 
 int main()

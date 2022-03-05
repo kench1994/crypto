@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <openssl/x509.h>
-#include "utils/unique_array.hpp"
+#include "unique_array.hpp"
 namespace utils
 {
     // base64 编码
@@ -58,7 +58,6 @@ namespace utils
             if (pszTok)
                 ss << " ";
         }
-
         return ss.str();
     }
 }

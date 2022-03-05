@@ -1,9 +1,10 @@
 
 #pragma once
+#include "noncopyable.h"
 namespace utils
 {
     template<typename T> 
-    class unique_array // noncopyable
+    class unique_array : noncopyable
     {
     private:
         T * px;

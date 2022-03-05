@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <openssl/evp.h>
-#include "utils/unique_array.hpp"
+#include <utils/unique_array.hpp>
 namespace utils
 {
 	namespace crypto
